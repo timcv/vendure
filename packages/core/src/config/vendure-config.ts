@@ -843,6 +843,26 @@ export interface OrderOptions {
      * @since 3.8.0
      */
     orderRecalculationStrategy?: OrderRecalculationStrategy;
+    /**
+     * @description
+     * The value used for the `freezePromotions` option of the `modifyOrder` mutation when the
+     * mutation input does not specify one.
+     *
+     * An Order can only be modified from the `Modifying` state, which is only reachable once the
+     * customer has paid (or authorized payment). Re-testing the Promotions at that point means an
+     * edit which does not touch the OrderLines at all - correcting a shipping address, say - can
+     * still change what the Order costs, because a Promotion has since been disabled or one of its
+     * conditions now evaluates differently. Setting this to `true` freezes the Promotions recorded
+     * on the Order instead: their Adjustments are preserved and only taxes, prices and the shipping
+     * rate are re-calculated.
+     *
+     * The `modifyOrder` mutation can always override this per call by passing
+     * `options: { freezePromotions: ... }`.
+     *
+     * @default false
+     * @since 3.8.0
+     */
+    freezePromotionsOnModification?: boolean;
 }
 
 /**

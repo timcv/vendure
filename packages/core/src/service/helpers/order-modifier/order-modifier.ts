@@ -643,8 +643,20 @@ export class OrderModifier {
             orderLine.listPriceIncludesTax = priceResult.priceIncludesTax;
         }
 
+        const freezePromotions =
+            input.options?.freezePromotions ?? this.configService.orderOptions.freezePromotionsOnModification;
+        if (freezePromotions) {
+            // The Promotions recorded on the Order are the ones the customer agreed to when they
+            // paid, so they are carried over verbatim rather than re-tested. Prefer the translated
+            // instance from the active Promotions where there is one, so that a dry run still
+            // returns a fully-hydrated Promotion.
+            order.promotions = activePromotionsPre.map(
+                pre => promotions.find(p => idsAreEqual(p.id, pre.id)) ?? pre,
+            );
+        }
         await this.orderCalculator.applyPriceAdjustments(ctx, order, promotions, updatedOrderLines, {
             recalculateShipping: input.options?.recalculateShipping,
+            freezePromotions,
         });
         await this.promotionService.runPromotionSideEffects(ctx, order, activePromotionsPre);
         await this.connection.getRepository(ctx, OrderLine).save(order.lines, { reload: false });

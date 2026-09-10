@@ -198,6 +198,7 @@ export const defaultConfig: RuntimeVendureConfig = {
         guestCheckoutStrategy: new DefaultGuestCheckoutStrategy(),
         orderInterceptors: [],
         orderRecalculationStrategy: new NoOrderRecalculationStrategy(),
+        freezePromotionsOnModification: false,
     },
     paymentOptions: {
         paymentMethodEligibilityCheckers: [],
